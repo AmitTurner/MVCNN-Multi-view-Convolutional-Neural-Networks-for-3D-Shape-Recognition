@@ -11,7 +11,7 @@ using numpy efficient commands we inserted the cloud as volume with this line:
 `vol[locations[:,0],locations[:,1],locations[:,2]] = 1.0`
 
 and the whole Cloud to Volume function is as followed:
-`
+```
 def point_cloud_to_volume(points, size=32):
 	vol = np.zeros((size,size,size))
 	locations = np.copy(points)
@@ -21,16 +21,16 @@ def point_cloud_to_volume(points, size=32):
 	locations[locations < 0] = 0.0
 	vol[locations[:,0],locations[:,1],locations[:,2]] = 1.0
 	return vol
-`
+```
 ## VOLUME TO DEPTH MAP
 ![volume_to_depth](/images/volume_to_depth.png)
 using numpy argmax command we were able to create a depth map photo size 32X32 from each volume object by looking on the z axis only and taking the "closest" block containing his distance from 0. when no block is in axis, we simply put 0 in our map. representing it with "interpolation='nearest'" creates the desired result - a depth map of the object facing us. this is our function:
-`
+```
 def vol2depthmap(volume_array, bg_val=40):
 	vol = volume_array.argmax(2)
 	vol[vol == 0] = bg_val
 	return vol
-`
+```
 
 # PART 2 - MULTI-VIEW FOR EACH 3D OBJECT
 in order to implement the paper, we need to take each object and create 12 depth maps. one for each side view, moving 30 degrees each time. the easiest method would be moving the point cloud to the axis's center (0,0,0), rotating it by 30 around the Y axis, and bringing it back to it formet position.
@@ -51,13 +51,13 @@ rotation by 30 degrees matrice:
 0.0000000	| 0.5000000	| 0.8660254
 
 full function to rotate cloud by 30 degrees:
-`
+```
 def rotate_cloud(x):
 	y = np.subtract(x,0.5) 
 	y = rot_30.dot(y.T).T
 	y = np.add(y,0.5) 
 	return y
-`
+```
 
 the results were amazing! computing one object went dowm from 300ms to 7-12ms! and the whole process of computing all 12 depthmaps of all the objects takes around 15-30 second.
 ![1](/images/1.png)
