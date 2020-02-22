@@ -5,6 +5,7 @@
 
 ## POINTS CLOUD TO VOLUME
 ![cloud_to_volume](/images/cloud_to_volume.png)
+
 the first task was taking a point cloud represented by 3d points (vec3), for that we learned using numpy tools and syntax. "dumb" solutions took a long time for each cloud as it needed to run on a loop of the cloud points, so a diffrent method was needed. we chose creating an zeros arrays the size of 32X32X32, and inserting all of the points as 1's in the array.
 
 using numpy efficient commands we inserted the cloud as volume with this line:
@@ -24,6 +25,7 @@ def point_cloud_to_volume(points, size=32):
 ```
 ## VOLUME TO DEPTH MAP
 ![volume_to_depth](/images/volume_to_depth.png)
+
 using numpy argmax command we were able to create a depth map photo size 32X32 from each volume object by looking on the z axis only and taking the "closest" block containing his distance from 0. when no block is in axis, we simply put 0 in our map. representing it with "interpolation='nearest'" creates the desired result - a depth map of the object facing us. this is our function:
 ```
 def vol2depthmap(volume_array, bg_val=40):
@@ -60,24 +62,31 @@ def rotate_cloud(x):
 ```
 
 the results were amazing! computing one object went dowm from 300ms to 7-12ms! and the whole process of computing all 12 depthmaps of all the objects takes around 15-30 second.
+
 ![1](/images/1.png)
 ![2](/images/2.png)
 ![3](/images/3.png)
+
 we now have some data to work with, its time to start working on the CNN.
 
 # PART 3 - USING KERAS TO BUILD A NEWRON NETWORK
 At the beginning we tried to train out network with one 2d picture (our depth map Picture) And to understand if the network is learning. Moreover, it will give us indication for our reshape contribution. Reminder: our dataset is ModelNet10 and we have a set of 3991 3d pictures for our train and 908 3d pictures for our validation. So we give the network this data:
 ![4](/images/4.jpg)
+
 We run the network for 30 epochs and those are the result we get:
 ![5](/images/5.jpg)
 
+
 In part 2 we described how we reshape the 3d object into 12 2d pictures, Now we are going to use this crucial data to build a big network that will learn from it. Our way to make it work is to take every picture from the 12 2d picture and to build a small model for each of them after using a split function. After we iterate all the angles, we merge them together by maximum pooling and this we be big model (we add some layers to the big model after pooling)
 ![6](/images/6.png)
+
 Now our array is a (3991, 12, 32, 32,1) array for our training and (908, 12, 32, 32, 1) array for our validation. we run the network for 30 epochs and those are the result we get:
 ![7](/images/7.jpg)
+
 We see now that our accuracy improved by more than 10% and loss decreased
 
 ![8](/images/8.png)
+
 We build a confusion matrix to our validation set in order to allow visualization of our algorithm:
 ![9](/images/9.png)
 
