@@ -67,14 +67,14 @@ we now have some data to work with, its time to start working on the CNN.
 
 # PART 3 - USING KERAS TO BUILD A NEWRON NETWORK
 At the beginning we tried to train out network with one 2d picture (our depth map Picture) And to understand if the network is learning. Moreover, it will give us indication for our reshape contribution. Reminder: our dataset is ModelNet10 and we have a set of 3991 3d pictures for our train and 908 3d pictures for our validation. So we give the network this data:
-![4](/images/4.png)
+![4](/images/4.jpg)
 We run the network for 30 epochs and those are the result we get:
-![5](/images/5.png)
+![5](/images/5.jpg)
 
 In part 2 we described how we reshape the 3d object into 12 2d pictures, Now we are going to use this crucial data to build a big network that will learn from it. Our way to make it work is to take every picture from the 12 2d picture and to build a small model for each of them after using a split function. After we iterate all the angles, we merge them together by maximum pooling and this we be big model (we add some layers to the big model after pooling)
 ![6](/images/6.png)
 Now our array is a (3991, 12, 32, 32,1) array for our training and (908, 12, 32, 32, 1) array for our validation. we run the network for 30 epochs and those are the result we get:
-![7](/images/7.png)
+![7](/images/7.jpg)
 We see now that our accuracy improved by more than 10% and loss decreased
 
 ![8](/images/8.png)
